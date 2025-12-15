@@ -2,7 +2,7 @@
 ## Par Eliot PAZZÉ et Alex RHODES
 
 ## Description
-Application Processing pour manipulation multimodale de formes géométriques via reconnaissance vocale (SRA5), détection gestuelle (ICAR) et souris.
+Application Processing pour manipulation multimodale de formes géométriques via reconnaissance vocale (SRA5), détection gestuelle (ICAR) et position de la souris.
 
 ## Fonctionnalités
 
@@ -35,7 +35,7 @@ COULEURS :
 ## Lancement
 ```
 1. Double-clic Launcher.bat
-2. SRA5 + Ivy requis
+2. SRA5 + Ivy doivent s'ouvrirent (requis)
 3. Positionnez souris → commandes vocales
 ```
 
