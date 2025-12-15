@@ -30,6 +30,8 @@ COULEURS :
 3. "copier ça" → duplique + suit souris → "ici" → pose
 4. dessiner une forme sur ICAR + "dessiner ça ici" → forme gestuelle placée
 5. "modifier jaune" → recolore forme sous souris
+6. "modifier en rectangle bleu" → forme sous souris remplacée + recolorée
+6. "supprimer ça" → suppression immédiate forme sous souris
 ```
 
 ## Lancement
