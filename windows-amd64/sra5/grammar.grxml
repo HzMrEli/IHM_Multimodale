@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE grammar PUBLIC "-//W3C//DTD GRAMMAR 1.0//EN"
+                "grammar.dtd">
+<!-- the default grammar language is FR  -->
+<grammar  version="1.0"
+          mode ="voice"
+          xmlns="http://www.w3.org/2001/06/grammar"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.w3.org/2001/06/grammar
+                              grammar.xsd"
+          xml:lang="fr-FR" root="Speech_Recognition" tag-format="semantics/1.0">
+
+
+  <rule id="Speech_Recognition" scope="public">
+    <one-of>
+      <!-- 1) Commande complète -->
+      <item>
+        <ruleref uri="#commande_complete"/>
+        <tag>
+          out = "action=" + rules.commande_complete.action
+              + " where=" + rules.commande_complete.pointage
+              + " form=" + rules.commande_complete.forme
+              + " color=" + rules.commande_complete.couleur
+              + " localisation=" + rules.commande_complete.localisation;
+        </tag>
+      </item>
+
+      <!-- 2) Localisation seule utilisée comme fin de MOVE -->
+      <item>
+        <ruleref uri="#localisation_simple"/>
+        <tag>
+          out = "action=" + rules.localisation_simple.action
+              + " where=none"
+              + " form=none"
+              + " color=none"
+              + " localisation=" + rules.localisation_simple.localisation;
+        </tag>
+      </item>
+    </one-of>
+  </rule>
+
+  <!-- Commande complète (action + options) -->
+  <rule id="commande_complete">
+    <tag>
+      out.action = "none";
+      out.pointage = "none";
+      out.forme = "none";
+      out.couleur = "none";
+      out.localisation = "none";
+    </tag>
+
+    <!-- action obligatoire -->
+    <item>
+      <ruleref uri="#action"/>
+      <tag> out.action = rules.action; </tag>
+    </item>
+
+    <!-- soit pointage, soit forme (optionnels) -->
+    <item repeat="0-1">
+      <one-of>
+        <item>
+          <ruleref uri="#pointage"/>
+          <tag> out.pointage = rules.pointage; </tag>
+        </item>
+        <item>
+          <ruleref uri="#forme"/>
+          <tag> out.forme = rules.forme; </tag>
+        </item>
+      </one-of>
+    </item>
+
+    <!-- couleur optionnelle -->
+    <item repeat="0-1">
+      <ruleref uri="#couleur"/>
+      <tag> out.couleur = rules.couleur; </tag>
+    </item>
+
+    <!-- localisation optionnelle -->
+    <item repeat="0-1">
+      <ruleref uri="#localisation"/>
+      <tag> out.localisation = rules.localisation; </tag>
+    </item>
+
+    <ruleref special="GARBAGE"/>
+  </rule>
+
+  <!-- Localisation seule : sert de 2e commande MOVE ("là", "ici"…) -->
+  <rule id="localisation_simple">
+    <tag>
+      out.action = "MOVE";
+      out.localisation = "none";
+    </tag>
+    <ruleref uri="#localisation"/>
+    <tag>
+      out.localisation = rules.localisation;
+    </tag>
+  </rule>
+
+  <!-- ACTION -->
+  <rule id="action">
+    <tag> out = "none" </tag>
+    <one-of>
+      <!-- CREATE -->
+      <item> créer <tag> out = "CREATE" </tag></item>
+      <item> dessiner <tag> out = "CREATE" </tag></item>
+      <item> tracer <tag> out = "CREATE" </tag></item>
+      <item> ajouter <tag> out = "CREATE" </tag></item>
+      <item> mettre <tag> out = "CREATE" </tag></item>
+
+      <!-- DELETE -->
+      <item> supprimer <tag> out = "DELETE" </tag></item>
+      <item> effacer <tag> out = "DELETE" </tag></item>
+      <item> enlever <tag> out = "DELETE" </tag></item>
+      <item> retirer <tag> out = "DELETE" </tag></item>
+
+      <!-- MODIFY -->
+      <item> modifier <tag> out = "MODIFY" </tag></item>
+      <item> éditer <tag> out = "MODIFY" </tag></item>
+      <item> changer <tag> out="MODIFY" </tag></item>
+      <item> corriger <tag> out="MODIFY" </tag></item>
+
+      <!-- MOVE -->
+      <item> déplacer  <tag> out = "MOVE" </tag></item>
+      <item> bouger  <tag> out = "MOVE" </tag></item>
+      <item> déplacer ça  <tag> out = "MOVE" </tag></item>
+      <item> bouger ça  <tag> out = "MOVE" </tag></item>
+
+      <!-- QUIT -->
+      <item> quitter <tag> out = "QUIT" </tag></item>
+      <item> sortir <tag> out = "QUIT" </tag></item>
+      <item> arrêter <tag> out = "QUIT" </tag></item>
+      <item> fermer <tag> out = "QUIT" </tag></item>
+      <item> terminer <tag> out = "QUIT" </tag></item>
+	  
+	  <!-- COPY -->
+	  <item> copier <tag> out = "COPY" </tag></item>
+      <item> dupliquer <tag> out = "COPY" </tag></item>
+    </one-of>
+  </rule>
+
+  <!-- POINTAGE-->
+  <rule id="pointage">
+    <tag> out = "none" </tag>
+    <one-of>
+      <item> cette forme <tag> out = "THIS" </tag></item>
+      <item> ça <tag> out = "THIS" </tag></item>
+      <item> celle ci <tag> out = "THIS" </tag></item>
+      <item> celle là <tag> out = "THIS" </tag></item>
+      <item> celle <tag> out = "THIS" </tag></item>
+    </one-of>
+  </rule>
+
+  <!-- FORME -->
+  <rule id="forme">
+    <tag> out = "none" </tag>
+    <ruleref special="GARBAGE"/>
+    <one-of>
+      <item> triangle <tag> out = "TRIANGLE" </tag></item>
+
+      <item> losange <tag> out = "DIAMOND" </tag></item>
+      <item> diamant <tag> out = "DIAMOND" </tag></item>
+      <item> rhombe <tag> out = "DIAMOND" </tag></item>
+
+      <item> cercle <tag> out = "CIRCLE" </tag></item>
+      <item> rond <tag> out = "CIRCLE" </tag></item>
+      <item> disque <tag> out = "CIRCLE" </tag></item>
+
+      <item> rectangle <tag> out = "RECTANGLE" </tag></item>
+      <item> carré <tag> out = "RECTANGLE" </tag></item>
+      <item> bloc <tag> out = "RECTANGLE" </tag></item>
+    </one-of>
+  </rule>
+
+  <!-- COULEUR -->
+  <rule id="couleur">
+    <tag> out = "none" </tag>
+    <ruleref special="GARBAGE"/>
+    <one-of>
+      <item> rouge <tag> out = "RED" </tag></item>
+      <item> écarlate <tag> out = "RED" </tag></item>
+
+      <item> orange <tag> out = "ORANGE" </tag></item>
+
+      <item> jaune <tag> out = "YELLOW" </tag></item>
+      <item> doré <tag> out = "YELLOW" </tag></item>
+
+      <item> vert <tag> out = "GREEN" </tag></item>
+      <item> vert clair <tag> out = "GREEN" </tag></item>
+
+      <item> bleu <tag> out = "BLUE" </tag></item>
+      <item> bleu clair <tag> out = "BLUE" </tag></item>
+
+      <item> violet <tag> out = "PURPLE" </tag></item>
+      <item> mauve <tag> out = "PURPLE" </tag></item>
+
+      <item> noir <tag> out = "DARK" </tag></item>
+      <item> sombre <tag> out = "DARK" </tag></item>
+
+      <item> rose <tag> out = "PINK" </tag></item>
+      <item> fuchsia <tag> out = "PINK" </tag></item>
+    </one-of>
+  </rule>
+
+  <!-- LOCALISATION -->
+  <rule id="localisation">
+    <tag> out = "none" </tag>
+    <one-of>
+      <item> là <tag> out = "THERE" </tag></item>
+      <item> ici <tag> out = "THERE" </tag></item>
+      <item> à cet endroit <tag> out = "THERE" </tag></item>
+      <item> juste là <tag> out = "THERE" </tag></item>
+      <item> par ici <tag> out = "THERE" </tag></item>
+    </one-of>
+  </rule>
+
+</grammar>
